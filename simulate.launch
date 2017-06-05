@@ -1,0 +1,47 @@
+<launch>
+
+    <node pkg="tf" type="static_transform_publisher" name="tf_velodyne_optical" args="0 0 0 0.0 0.0 0.0 /velodyne /velodyne_optical 10"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="tf_leftcam_optical" args="0 0 0 0.0 0.0 0.0 /leftcam /leftcam_optical 10"/>
+
+
+    <node pkg="tf" type="static_transform_publisher" name="tf_leftcam" args="0 0 0 0.0 0.0 0.0 /velodyne /leftcam 10"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="tf_velodyne" args="0 0 1.73 0.0 0.0 0.0 /base_link /velodyne 10"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="tf_base_link" args="0 0 0 0.0 0.0 0.0 /odom /base_link 10"/>
+
+
+    <node pkg="tf" type="static_transform_publisher" name="tf_map" args="0 0 0 0.0 0.0 0.0 /world /map 10"/>
+
+
+
+    <node name="pose_odometry" pkg="mdet" type="pose_odometry" />
+
+
+
+    <node name="local_grid" pkg="mdet" type="local_grid">
+        <remap from="laser_scan" to="/scan"/>
+
+        <remap from="point_cloud_scan" to="/point_cloud_obstacles"/>
+
+        <param name="target_frame" value="odom"/>
+        <param name="max_range" value="100.0"/>
+        <param name="range_increment" value="0.2"/>
+    </node>
+
+
+    <node name="local_grid_simulator" pkg="mdet" type="local_grid_simulator.py" output="screen"/>
+
+
+    <node name="particle_filter" pkg="mdet" type="particle_filter_main.py" output="screen"/>
+
+
+    <node name="requester" pkg="mdet" type="requester.py" output="screen" />
+
+
+    <node name="rviz" pkg="rviz" type="rviz">
+    </node>
+
+
+</launch>
